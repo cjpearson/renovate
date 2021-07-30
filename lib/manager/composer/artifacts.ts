@@ -76,11 +76,6 @@ export async function updateArtifacts({
 }: UpdateArtifact): Promise<UpdateArtifactsResult[] | null> {
   logger.debug(`composer.updateArtifacts(${packageFileName})`);
 
-  const cacheDir = await ensureCacheDir(
-    './others/composer',
-    'COMPOSER_CACHE_DIR'
-  );
-
   const lockFileName = packageFileName.replace(/\.json$/, '.lock');
   const existingLockFileContent = await readLocalFile(lockFileName);
   if (!existingLockFileContent) {
@@ -100,7 +95,7 @@ export async function updateArtifacts({
     const execOptions: ExecOptions = {
       cwdFile: packageFileName,
       extraEnv: {
-        COMPOSER_CACHE_DIR: cacheDir,
+        COMPOSER_CACHE_DIR: await ensureCacheDir('composer'),
         COMPOSER_AUTH: getAuthJson(),
       },
       docker: {
@@ -124,7 +119,7 @@ export async function updateArtifacts({
     }
     args += ' --no-ansi --no-interaction';
     if (!getAdminConfig().allowScripts || config.ignoreScripts) {
-      args += ' --no-scripts --no-autoloader';
+      args += ' --no-scripts --no-autoloader --no-plugins';
     }
     logger.debug({ cmd, args }, 'composer command');
     await exec(`${cmd} ${args}`, execOptions);
