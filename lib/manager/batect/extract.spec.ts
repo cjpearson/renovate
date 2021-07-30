@@ -1,6 +1,6 @@
 import { getName } from '../../../test/util';
-import { setAdminConfig } from '../../config/admin';
-import type { RepoAdminConfig } from '../../config/types';
+import { setRepoGlobalConfig } from '../../config/global';
+import type { RepoGlobalConfig } from '../../config/types';
 import { id as gitTagDatasource } from '../../datasource/git-tags';
 import { id as dockerVersioning } from '../../versioning/docker';
 import { id as semverVersioning } from '../../versioning/semver';
@@ -27,7 +27,7 @@ function createGitDependency(repo: string, version: string): PackageDependency {
   };
 }
 
-const adminConfig: RepoAdminConfig = {
+const repoGlobalConfig: RepoGlobalConfig = {
   localDir: '',
 };
 
@@ -36,11 +36,11 @@ const config: ExtractConfig = {};
 describe(getName(), () => {
   describe('extractPackageFile()', () => {
     beforeEach(() => {
-      setAdminConfig(adminConfig);
+      setRepoGlobalConfig(repoGlobalConfig);
     });
 
     afterEach(() => {
-      setAdminConfig();
+      setRepoGlobalConfig();
     });
 
     it('returns empty array for empty configuration file', async () => {

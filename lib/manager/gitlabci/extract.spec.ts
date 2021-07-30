@@ -1,20 +1,20 @@
 import { getName, logger } from '../../../test/util';
-import { setAdminConfig } from '../../config/admin';
-import type { RepoAdminConfig } from '../../config/types';
+import { setRepoGlobalConfig } from '../../config/global';
+import type { RepoGlobalConfig } from '../../config/types';
 import type { ExtractConfig, PackageDependency } from '../types';
 import { extractAllPackageFiles } from './extract';
 
 const config: ExtractConfig = {};
 
-const adminConfig: RepoAdminConfig = { localDir: '' };
+const repoGlobalConfig: RepoGlobalConfig = { localDir: '' };
 
 describe(getName(), () => {
   beforeEach(() => {
-    setAdminConfig(adminConfig);
+    setRepoGlobalConfig(repoGlobalConfig);
   });
 
   afterEach(() => {
-    setAdminConfig();
+    setRepoGlobalConfig();
   });
 
   describe('extractAllPackageFiles()', () => {

@@ -3,8 +3,8 @@ import is from '@sindresorhus/is';
 import { dequal } from 'dequal';
 import { logger } from '../logger';
 import { clone } from '../util/clone';
-import { getAdminConfig } from './admin';
 import { getOptions } from './definitions';
+import { getRepoGlobalConfig } from './global';
 import { removedPresets } from './presets/common';
 import type {
   MigratedConfig,
@@ -55,7 +55,7 @@ export function migrateConfig(
       'optionalDependencies',
       'peerDependencies',
     ];
-    const { migratePresets } = getAdminConfig();
+    const { migratePresets } = getRepoGlobalConfig();
     for (const [key, val] of Object.entries(config)) {
       if (removedOptions.includes(key)) {
         delete migratedConfig[key];

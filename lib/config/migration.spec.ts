@@ -1,7 +1,7 @@
 import { getName } from '../../test/util';
 import { PLATFORM_TYPE_GITHUB } from '../constants/platforms';
-import { setAdminConfig } from './admin';
 import { getConfig } from './defaults';
+import { setRepoGlobalConfig } from './global';
 import * as configMigration from './migration';
 import type {
   MigratedConfig,
@@ -684,7 +684,7 @@ describe(getName(), () => {
     expect(migratedConfig).toMatchSnapshot();
   });
   it('it migrates presets', () => {
-    setAdminConfig({
+    setRepoGlobalConfig({
       migratePresets: {
         '@org': 'local>org/renovate-config',
         '@org2/foo': '',

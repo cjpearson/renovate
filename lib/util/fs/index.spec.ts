@@ -2,7 +2,7 @@ import { withDir } from 'tmp-promise';
 import { join } from 'upath';
 import { envMock } from '../../../test/exec-util';
 import { getName, mocked } from '../../../test/util';
-import { setAdminConfig } from '../../config/admin';
+import { setRepoGlobalConfig } from '../../config/global';
 import * as _env from '../exec/env';
 import {
   ensureCacheDir,
@@ -22,7 +22,7 @@ const env = mocked(_env);
 describe(getName(), () => {
   describe('readLocalFile', () => {
     beforeEach(() => {
-      setAdminConfig({ localDir: '' });
+      setRepoGlobalConfig({ localDir: '' });
     });
 
     it('reads buffer', async () => {
@@ -60,7 +60,7 @@ describe(getName(), () => {
     it('returns path for file', async () => {
       await withDir(
         async (localDir) => {
-          setAdminConfig({
+          setRepoGlobalConfig({
             localDir: localDir.path,
           });
 
@@ -114,7 +114,7 @@ describe(getName(), () => {
     it('returns dir content', async () => {
       await withDir(
         async (localDir) => {
-          setAdminConfig({
+          setRepoGlobalConfig({
             localDir: localDir.path,
           });
           await writeLocalFile('test/Cargo.toml', '');
@@ -142,7 +142,7 @@ describe(getName(), () => {
     it('return empty array for non existing directory', async () => {
       await withDir(
         async (localDir) => {
-          setAdminConfig({
+          setRepoGlobalConfig({
             localDir: localDir.path,
           });
           await expect(readLocalDirectory('somedir')).rejects.toThrow();
@@ -174,14 +174,14 @@ describe(getName(), () => {
         ...envMock.basic,
       });
 
-      setAdminConfig({
+      setRepoGlobalConfig({
         cacheDir: join(dirFromConfig),
       });
 
       return { dirFromEnv, dirFromConfig };
     }
 
-    it('prefers environment variables over admin config', async () => {
+    it('prefers environment variables over global config', async () => {
       await withDir(
         async (tmpDir) => {
           const { dirFromEnv } = setupMock(tmpDir.path);

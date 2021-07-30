@@ -6,8 +6,8 @@ import {
   mocked,
   platform,
 } from '../../../test/util';
-import { setAdminConfig } from '../../config/admin';
-import type { RepoAdminConfig } from '../../config/types';
+import { setRepoGlobalConfig } from '../../config/global';
+import type { RepoGlobalConfig } from '../../config/types';
 import {
   MANAGER_LOCKFILE_ERROR,
   REPOSITORY_CHANGED,
@@ -66,7 +66,7 @@ const sanitize = mocked(_sanitize);
 const fs = mocked(_fs);
 const limits = mocked(_limits);
 
-const adminConfig: RepoAdminConfig = { localDir: '', cacheDir: '' };
+const repoGlobalConfig: RepoGlobalConfig = { localDir: '', cacheDir: '' };
 
 describe(getName(), () => {
   describe('processBranch', () => {
@@ -99,7 +99,7 @@ describe(getName(), () => {
           body: '',
         },
       });
-      setAdminConfig(adminConfig);
+      setRepoGlobalConfig(repoGlobalConfig);
       sanitize.sanitize.mockImplementation((input) => input);
     });
     afterEach(() => {
@@ -107,7 +107,7 @@ describe(getName(), () => {
       platform.ensureCommentRemoval.mockClear();
       commit.commitFilesToBranch.mockClear();
       jest.resetAllMocks();
-      setAdminConfig();
+      setRepoGlobalConfig();
     });
     it('skips branch if not scheduled and branch does not exist', async () => {
       schedule.isScheduledNow.mockReturnValueOnce(false);
@@ -416,7 +416,7 @@ describe(getName(), () => {
       git.branchExists.mockReturnValue(true);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
       automerge.tryBranchAutomerge.mockResolvedValueOnce('automerged');
-      setAdminConfig({ ...adminConfig, dryRun: true });
+      setRepoGlobalConfig({ ...repoGlobalConfig, dryRun: true });
       await branchWorker.processBranch(config);
       expect(automerge.tryBranchAutomerge).toHaveBeenCalledTimes(1);
       expect(prWorker.ensurePr).toHaveBeenCalledTimes(0);
@@ -712,7 +712,7 @@ describe(getName(), () => {
       checkExisting.prAlreadyExisted.mockResolvedValueOnce({
         state: PrState.Closed,
       } as Pr);
-      setAdminConfig({ ...adminConfig, dryRun: true });
+      setRepoGlobalConfig({ ...repoGlobalConfig, dryRun: true });
       expect(await branchWorker.processBranch(config)).toMatchSnapshot();
     });
 
@@ -722,7 +722,7 @@ describe(getName(), () => {
         state: PrState.Open,
       } as Pr);
       git.isBranchModified.mockResolvedValueOnce(true);
-      setAdminConfig({ ...adminConfig, dryRun: true });
+      setRepoGlobalConfig({ ...repoGlobalConfig, dryRun: true });
       expect(await branchWorker.processBranch(config)).toMatchSnapshot();
     });
 
@@ -744,7 +744,7 @@ describe(getName(), () => {
       git.isBranchModified.mockResolvedValueOnce(true);
       schedule.isScheduledNow.mockReturnValueOnce(false);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
-      setAdminConfig({ ...adminConfig, dryRun: true });
+      setRepoGlobalConfig({ ...repoGlobalConfig, dryRun: true });
       expect(
         await branchWorker.processBranch({
           ...config,
@@ -776,7 +776,7 @@ describe(getName(), () => {
         pr: {},
       } as EnsurePrResult);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
-      setAdminConfig({ ...adminConfig, dryRun: true });
+      setRepoGlobalConfig({ ...repoGlobalConfig, dryRun: true });
       expect(
         await branchWorker.processBranch({
           ...config,
@@ -850,8 +850,8 @@ describe(getName(), () => {
       schedule.isScheduledNow.mockReturnValueOnce(false);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
 
-      setAdminConfig({
-        ...adminConfig,
+      setRepoGlobalConfig({
+        ...repoGlobalConfig,
         allowedPostUpgradeCommands: ['^echo {{{versioning}}}$'],
         allowPostUpgradeCommandTemplating: true,
         exposeAllEnv: true,
@@ -927,8 +927,8 @@ describe(getName(), () => {
       schedule.isScheduledNow.mockReturnValueOnce(false);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
 
-      setAdminConfig({
-        ...adminConfig,
+      setRepoGlobalConfig({
+        ...repoGlobalConfig,
         allowedPostUpgradeCommands: ['^exit 1$'],
         allowPostUpgradeCommandTemplating: true,
         exposeAllEnv: true,
@@ -996,8 +996,8 @@ describe(getName(), () => {
 
       schedule.isScheduledNow.mockReturnValueOnce(false);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
-      setAdminConfig({
-        ...adminConfig,
+      setRepoGlobalConfig({
+        ...repoGlobalConfig,
         allowedPostUpgradeCommands: ['^echo {{{versioning}}}$'],
         allowPostUpgradeCommandTemplating: false,
         exposeAllEnv: true,
@@ -1076,8 +1076,8 @@ describe(getName(), () => {
       schedule.isScheduledNow.mockReturnValueOnce(false);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
 
-      setAdminConfig({
-        ...adminConfig,
+      setRepoGlobalConfig({
+        ...repoGlobalConfig,
         allowedPostUpgradeCommands: ['^echo {{{depName}}}$'],
         allowPostUpgradeCommandTemplating: true,
         exposeAllEnv: true,
@@ -1210,8 +1210,8 @@ describe(getName(), () => {
       schedule.isScheduledNow.mockReturnValueOnce(false);
       commit.commitFilesToBranch.mockResolvedValueOnce(null);
 
-      setAdminConfig({
-        ...adminConfig,
+      setRepoGlobalConfig({
+        ...repoGlobalConfig,
         allowedPostUpgradeCommands: ['^echo hardcoded-string$'],
         allowPostUpgradeCommandTemplating: true,
         trustLevel: 'high',

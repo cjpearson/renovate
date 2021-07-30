@@ -12,8 +12,8 @@ import {
   git,
   partial,
 } from '../../../test/util';
-import { setAdminConfig } from '../../config/admin';
-import type { RepoAdminConfig } from '../../config/types';
+import { setRepoGlobalConfig } from '../../config/global';
+import type { RepoGlobalConfig } from '../../config/types';
 import { resetPrefetchedImages } from '../../util/exec/docker';
 import type { StatusResult } from '../../util/git';
 import type { UpdateArtifactsConfig } from '../types';
@@ -27,11 +27,11 @@ jest.mock('../../util/exec/env');
 const exec: jest.Mock<typeof _exec> = _exec as any;
 const fixtures = resolve(__dirname, './__fixtures__');
 
-const adminConfig: RepoAdminConfig = {
+const repoGlobalConfig: RepoGlobalConfig = {
   localDir: resolve(fixtures, './testFiles'),
 };
 
-const dockerAdminConfig = { ...adminConfig, binarySource: 'docker' };
+const dockerGlobalConfig = { ...repoGlobalConfig, binarySource: 'docker' };
 
 const config: UpdateArtifactsConfig = {
   newValue: '5.6.4',
@@ -54,14 +54,14 @@ describe(getName(), () => {
       LC_ALL: 'en_US',
     });
 
-    setAdminConfig(adminConfig);
+    setRepoGlobalConfig(repoGlobalConfig);
     resetPrefetchedImages();
 
     fs.readLocalFile.mockResolvedValue('test');
   });
 
   afterEach(() => {
-    setAdminConfig();
+    setRepoGlobalConfig();
   });
 
   it('replaces existing value', async () => {
@@ -100,7 +100,7 @@ describe(getName(), () => {
   });
 
   it('gradlew not found', async () => {
-    setAdminConfig({ ...adminConfig, localDir: 'some-dir' });
+    setRepoGlobalConfig({ ...repoGlobalConfig, localDir: 'some-dir' });
     const res = await dcUpdate.updateArtifacts({
       packageFileName: 'gradle-wrapper.properties',
       updatedDeps: [],
@@ -152,7 +152,7 @@ describe(getName(), () => {
       newPackageFileContent: `distributionSha256Sum=336b6898b491f6334502d8074a6b8c2d73ed83b92123106bd4bf837f04111043\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-6.3-bin.zip`,
       config: {
         ...config,
-        ...dockerAdminConfig,
+        ...dockerGlobalConfig,
       },
     });
 

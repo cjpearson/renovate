@@ -1,6 +1,6 @@
 import { join } from 'upath';
 import { fs, getName, loadFixture, mocked } from '../../../../test/util';
-import { setAdminConfig } from '../../../config/admin';
+import { setRepoGlobalConfig } from '../../../config/global';
 import { getPkgReleases } from '../../../datasource';
 import type { UpdateArtifactsConfig } from '../../types';
 import * as hash from './hash';
@@ -15,7 +15,7 @@ const config = {
   constraints: {},
 };
 
-const adminConfig = {
+const repoGlobalConfig = {
   // `join` fixes Windows CI
   localDir: join('/tmp/github/some/repo'),
   cacheDir: join('/tmp/renovate/cache'),
@@ -32,7 +32,7 @@ describe(getName(), () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.resetModules();
-    setAdminConfig(adminConfig);
+    setRepoGlobalConfig(repoGlobalConfig);
   });
 
   afterEach(() => {
